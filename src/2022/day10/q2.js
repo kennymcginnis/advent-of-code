@@ -1,16 +1,20 @@
-import data from './sample2.txt'
+import data from './input.txt'
 
 const input = data.split('\n').map((l) => l.split(' '))
 
-console.log({input})
-
-let cycle = 1
+let cycle = 0
 let register = 1
 let output = [[], [], [], [], [], []]
+let dead = [...Array(240)].map((_, i) => {
+  output[Math.floor(i / 40)][i % 40] = '.'
+})
 
 const draw = () => {
+  let rowcycle = cycle % 40
+  const lit = (register - 1) <= rowcycle && rowcycle <= (register + 1)
+  // console.log({cycle, register, lit})
+  if (lit) output[Math.floor(cycle / 40)][cycle % 40] = '#'
   cycle++
-  output[Math.floor(cycle / 40)][cycle % 40] = '.'
 }
 
 input.forEach(([action, value]) => {
@@ -33,4 +37,5 @@ ${output[1].join('')}
 ${output[2].join('')}
 ${output[3].join('')}
 ${output[4].join('')}
+${output[5].join('')}
 `)
