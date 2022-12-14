@@ -1,4 +1,4 @@
-import data from './input.txt'
+import data from './input.mjs'
 
 const grid = data
   .split('\n')
@@ -43,7 +43,7 @@ const init = () => {
       if (col > 0) addNeighbor(height, row, col - 1, neighbors) //below
 
       //Q2: mock link to "S" with distance of zero
-      if (current === "a") neighbors["S"] = 0
+      // if (current === "a") neighbors["S"] = 0
 
       if (current === "S" || current === "E") {
         graph[current] = neighbors
@@ -81,7 +81,7 @@ const findShortestPath = (graph, startNode, endNode) => {
   distances[endNode] = "Infinity"
   distances = Object.assign(distances, graph[startNode])
   // track paths using a hash object
-  let parents = {endNode: null}
+  let parents = {}
   for (let child in graph[startNode]) {
     parents[child] = startNode
   }
@@ -108,7 +108,7 @@ const findShortestPath = (graph, startNode, endNode) => {
         let newdistance = distance + children[child]
         // if there's no recorded distance from the start node to the child node in the distances object
         // or if the recorded distance is shorter than the previously stored distance from the start node to the child node
-        if (!distances[child] || distances[child] > newdistance) {
+        if (!distances[child] || newdistance < distances[child]) {
           // save the distance to the object
           distances[child] = newdistance
           // record the path
@@ -142,8 +142,9 @@ const findShortestPath = (graph, startNode, endNode) => {
 }
 
 init()
-console.log(graph)
-//Q1: console.log(findShortestPath(graph, "S", "E"))
+// console.log(graph)
+// Q1: S->E
+console.log(findShortestPath(graph, "S", "E"))
 
 //Q2: E->a(S)
-console.log(findShortestPath(graph, "E", "S"))
+// console.log(findShortestPath(graph, "E", "S"))
