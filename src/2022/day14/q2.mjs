@@ -10,7 +10,7 @@ const map = {'500,0': '+'}
 const pos = (x, y) => `${x},${y}`;
 
 let [maxX, maxY] = input[0][0]
-let minX = maxX
+let [minX, minY] = input[0][0]
 
 // mapping cave
 for (let path of input) {
@@ -24,14 +24,29 @@ for (let path of input) {
       map[pos(x, startY)] = '#'
     }
     if (endX < minX) minX = endX
+    if (endY < minY) minY = endY
     if (endX > maxX) maxX = endX
     if (endY > maxY) maxY = endY
-    [startX, startY] = [endX, endY]
+    startX = endX
+    startY = endY
   }
 }
 
 //  adding floor
 for (let x = minX - 10; x <= maxX + 10; x++) map[pos(x, maxY + 2)] = '#'
+
+const draw = () => {
+//draw map
+  let drawing = ''
+  for (let y = 0; y < maxY + 5; y++) {
+    for (let x = minX - 10; x < maxX + 10; x++) {
+      drawing += map[pos(x, y)] || '.'
+    }
+    drawing += `
+`
+  }
+  return drawing
+}
 
 let falling = true
 let currX, currY
@@ -77,4 +92,6 @@ while (falling) {
 
 const answer = Object.keys(map).filter(a => map[a] === 'o').length
 
-console.log({map, answer})
+// console.log({map, answer})
+
+console.log(draw())

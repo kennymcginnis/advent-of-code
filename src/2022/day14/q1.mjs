@@ -5,61 +5,89 @@ const input = data.split('\n')
     .map(l => l.split(',')
       .map(Number)))
 
-const map = {
-  '500,0': '+',
-}
-
+const map = {'500,0': '+'}
 
 const pos = (x, y) => `${x},${y}`
 
-let max = input[0][0][1]
+let [maxX, maxY] = input[0][0]
+let [minX, minY] = input[0][0]
+
+// mapping cave
 for (let path of input) {
-  let [sx, sy] = path[0]
+  let [startX, startY] = path[0]
   for (let line = 1; line < path.length; line++) {
-    const [ex, ey] = path[line]
-    if (sx === ex) for (let y = sy; (sy < ey) ? y <= ey : y >= ey; (sy < ey) ? y++ : y--) {
-      map[pos(sx, y)] = '#'
+    const [endX, endY] = path[line]
+    if (startX === endX) for (let y = startY; (startY < endY) ? y <= endY : y >= endY; (startY < endY) ? y++ : y--) {
+      map[pos(startX, y)] = '#'
     }
-    if (sy === ey) for (let x = sx; (sx < ex) ? x <= ex : x >= ex; (sx < ex) ? x++ : x--) {
-      map[pos(x, sy)] = '#'
+    if (startY === endY) for (let x = startX; (startX < endX) ? x <= endX : x >= endX; (startX < endX) ? x++ : x--) {
+      map[pos(x, startY)] = '#'
     }
-    if (ey > max) max = ey
-    [sx, sy] = [ex, ey]
+    if (endX < minX) minX = endX
+    if (endY < minY) minY = endY
+    if (endX > maxX) maxX = endX
+    if (endY > maxY) maxY = endY
+    startX = endX
+    startY = endY
   }
 }
 
+const draw = () => {
+//draw map
+  let drawing = ''
+  for (let y = 0; y < maxY + 5; y++) {
+    for (let x = minX - 10; x < maxX + 10; x++) {
+      drawing += map[pos(x, y)] || '.'
+    }
+    drawing += `
+`
+  }
+  return drawing
+}
+
 let falling = true
-let cx, cy
+let endlessVoid = false
+let currX, currY
 const starting = [500, 0]
 while (falling) {
-  if (cx === undefined) [cx, cy] = starting
+  if (currX === undefined) [currX, currY] = starting
 
   // endless void
-  if (cy > max) falling = false
+  if (currY > maxY) {
+    if (endlessVoid) break
+    endlessVoid = true
+    currX = undefined
+    continue
+  }
 
   // check below
-  if (!map[pos(cx, cy + 1)]) {
-    cy++
+  if (!map[pos(currX, currY + 1)]) {
+    if (endlessVoid) map[pos(currX, currY + 1)] = '~'
+    currY++
     continue
   }
   // one step down and to the left
-  if (!map[pos(cx - 1, cy + 1)]) {
-    cx--
-    cy++
+  if (!map[pos(currX - 1, currY + 1)]) {
+    if (endlessVoid) map[pos(currX - 1, currY)] = '~'
+    currX--
+    currY++
     continue
   }
   // one step down and to the right
-  if (!map[pos(cx + 1, cy + 1)]) {
-    cx++
-    cy++
+  if (!map[pos(currX + 1, currY + 1)]) {
+    if (endlessVoid) map[pos(currX + 1, currY + 1)] = '~'
+    currX++
+    currY++
     continue
   }
 
   // If all three possible destinations are blocked, the unit of sand comes to rest
-  map[pos(cx, cy)] = 'o'
-  cx = undefined
+  map[pos(currX, currY)] = 'o'
+  currX = undefined
 }
 
 const answer = Object.keys(map).filter(a => map[a] === 'o').length
 
-console.log({map, answer})
+// console.log({map, answer})
+
+console.log(draw())
