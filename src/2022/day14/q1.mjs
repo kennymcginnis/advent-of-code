@@ -45,6 +45,8 @@ const draw = () => {
   return drawing
 }
 
+console.log(draw())
+
 let falling = true
 let endlessVoid = false
 let currX, currY
