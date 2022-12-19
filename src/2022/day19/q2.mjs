@@ -29,7 +29,7 @@ const testBlueprint = (blueprint, time) => {
 
   let maxGeode = 0
 
-  const canBuildRobot = ({ resources, blueprint }) => {
+  const canBuildRobot = (resources, blueprint) => {
     return (
       blueprint.ore <= resources.ore &&
       blueprint.clay <= resources.clay &&
@@ -37,7 +37,7 @@ const testBlueprint = (blueprint, time) => {
     )
   }
 
-  const buildTime = ({ resources, robots, blueprint }) => {
+  const buildTime = (resources, robots, blueprint) => {
     return Math.max(
       Math.ceil((blueprint.ore - resources.ore) / robots.ore),
       blueprint.clay && robots.clay && Math.ceil((blueprint.clay - resources.clay) / robots.clay),
@@ -47,9 +47,10 @@ const testBlueprint = (blueprint, time) => {
     )
   }
 
-  const timeUntilCompletion = data => 1 + (canBuildRobot(data) ? 0 : buildTime(data))
+  const timeUntilCompletion = (resources, robots, blueprint) =>
+    1 + (canBuildRobot(resources, blueprint) ? 0 : buildTime(resources, robots, blueprint))
 
-  const updateResources = ({ resources, timeSkip, robots, blueprint }) => {
+  const updateResources = (resources, timeSkip, robots, blueprint) => {
     return {
       ore: resources.ore + timeSkip * robots.ore - blueprint.ore,
       clay: resources.clay + timeSkip * robots.clay - blueprint.clay,
@@ -58,11 +59,11 @@ const testBlueprint = (blueprint, time) => {
     }
   }
 
-  const buildRobot = data => {
-    let { time, throttle, robots, constructing } = data
-    let timeSkip = timeUntilCompletion(data)
+  const buildRobot = (data, constructing, blueprint, throttle) => {
+    let { time, robots, resources } = data
+    let timeSkip = timeUntilCompletion(resources, robots, blueprint)
     if (time - timeSkip > (throttle || 0)) {
-      let resources = updateResources({ ...data, timeSkip })
+      resources = updateResources(resources, timeSkip, robots, blueprint)
       if (constructing === 'geode') {
         resources.geodes += time - timeSkip
       } else {
@@ -73,21 +74,17 @@ const testBlueprint = (blueprint, time) => {
   }
 
   const search = data => {
-    if (data.time < 1) return
-    if (data.resources.geodes > maxGeode) maxGeode = data.resources.geodes
+    let { resources, robots, time } = data
+    if (time < 1) return
+    if (resources.geodes > maxGeode) maxGeode = resources.geodes
 
-    //Build geode robot
-    if (data.robots.obsidian > 0) {
-      buildRobot({ ...data, constructing: 'geode', blueprint: blueprint.geode })
-      if (canBuildRobot({ ...data, blueprint: blueprint.geode })) return
+    if (robots.obsidian > 0) {
+      buildRobot(data, 'geode', blueprint.geode)
+      if (canBuildRobot(resources, blueprint.geode)) return
     }
-
-    if (data.robots.clay > 0)
-      buildRobot({ ...data, constructing: 'obsidian', blueprint: blueprint.obsidian, throttle: 2 })
-    if (data.robots.clay < max.clay)
-      buildRobot({ ...data, constructing: 'clay', blueprint: blueprint.clay, throttle: 3 })
-    if (data.robots.ore < max.ore)
-      buildRobot({ ...data, constructing: 'ore', blueprint: blueprint.ore, throttle: 4 })
+    if (robots.clay > 0) buildRobot(data, 'obsidian', blueprint.obsidian, 2)
+    if (robots.clay < max.clay) buildRobot(data, 'clay', blueprint.clay, 3)
+    if (robots.ore < max.ore) buildRobot(data, 'ore', blueprint.ore, 4)
   }
 
   let robots = { ore: 1, clay: 0, obsidian: 0 }

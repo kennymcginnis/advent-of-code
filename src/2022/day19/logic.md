@@ -1,0 +1,11 @@
+here's my logic:
+- if (I have less than 1min left), break recursion
+- if (I have an obsidian robot), build geode robot (either now or skip ahead in time and then build it with resources gathers)
+  - call recursion (subtracting however much time it took to gather the resources to build the robot)
+  - if (I can build it right now), break recursion
+- if (I have a clay robot), build obsidian (now or later)
+  - call recursion (minus time waited)
+- if (I don't already have more clay robots than I'll ever need), build clay robot (now or later)
+  - call recursion (minus time waited)
+- if (I don't already have more ore robots than I'll ever need), build ore robot (now or later)
+  - call recursion (minus time waited)
