@@ -28,6 +28,8 @@ const testBlueprint = (blueprint, time) => {
   }
 
   let maxGeode = 0
+  let maxDepth = 0
+  let count = 0
 
   const canBuildRobot = (resources, blueprint) => {
     return (
@@ -60,7 +62,7 @@ const testBlueprint = (blueprint, time) => {
   }
 
   const buildRobot = (data, constructing, blueprint, throttle) => {
-    let { time, robots, resources } = data
+    let { time, robots, resources, depth } = data
     let timeSkip = timeUntilCompletion(resources, robots, blueprint)
     if (time - timeSkip > (throttle || 0)) {
       resources = updateResources(resources, timeSkip, robots, blueprint)
@@ -69,13 +71,16 @@ const testBlueprint = (blueprint, time) => {
       } else {
         robots = { ...robots, [constructing]: robots[constructing] + 1 }
       }
-      search({ time: time - timeSkip, resources, robots })
+      search({ time: time - timeSkip, resources, robots, depth: depth + 1 })
     }
   }
 
   const search = data => {
-    let { resources, robots, time } = data
+    let { resources, robots, time, depth } = data
+    count++
+
     if (time < 1) return
+    if (depth > maxDepth) maxDepth = depth
     if (resources.geodes > maxGeode) maxGeode = resources.geodes
 
     if (robots.obsidian > 0) {
@@ -89,8 +94,8 @@ const testBlueprint = (blueprint, time) => {
 
   let robots = { ore: 1, clay: 0, obsidian: 0 }
   let resources = { ore: 0, clay: 0, obsidian: 0, geodes: 0 }
-  search({ time, robots, resources })
-  console.log('Blueprint max: ' + maxGeode)
+  search({ time, robots, resources, depth: 0 })
+  console.log({ maxGeode, maxDepth, count })
   return maxGeode
 }
 
@@ -118,5 +123,5 @@ const part2 = () => {
   console.log(timingMonitor())
 }
 
-part1()
+// part1()
 part2()
