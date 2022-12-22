@@ -47,16 +47,17 @@ const testBlueprint = (blueprint, time) => {
               Math.ceil((blueprint.geodeCost[1] - obsidian) / obsidianRobots),
             ))
 
-      search(
-        time - timeSkip,
-        oreRobots,
-        clayRobots,
-        obsidianRobots,
-        ore + timeSkip * oreRobots - blueprint.geodeCost[0],
-        clay + timeSkip * clayRobots,
-        obsidian + timeSkip * obsidianRobots - blueprint.geodeCost[1],
-        geodes + time - timeSkip,
-      )
+      if (time - timeSkip > 0)
+        search(
+          time - timeSkip,
+          oreRobots,
+          clayRobots,
+          obsidianRobots,
+          ore + timeSkip * oreRobots - blueprint.geodeCost[0],
+          clay + timeSkip * clayRobots,
+          obsidian + timeSkip * obsidianRobots - blueprint.geodeCost[1],
+          geodes + time - timeSkip,
+        )
 
       // if (canBuildGeodeNow) return
     }
