@@ -1,194 +1,102 @@
-import input from './map.mjs'
-import directions from './directions.mjs'
+// import input from './sample.mjs'
+import input from './input.mjs'
 
 let [timer, timingMonitor] = [0, () => (timer = !timer ? Date.now() : `${Date.now() - timer}ms`)]
 
-let map = [],
-  forwards,
-  rotations
-
-const parse = () => {
-  input.split('\n').map(line => {
-    let tmp = Array(50)
-    line.split('').forEach((v, col) => {
-      if (['.', '#'].includes(v)) tmp[col] = v
-    })
-    map.push(tmp)
-  })
-
-  forwards = directions.match(/\d+/g).map(Number)
-  rotations = directions.match(/[RL]/g)
-}
-
-const move = { '>': [0, 1], v: [1, 0], '<': [0, -1], '^': [-1, 0] }
-const dirValue = { '>': 0, v: 1, '<': 2, '^': 3 }
-const rotate = {
-  L: { '>': '^', v: '>', '<': 'v', '^': '<' },
-  R: { '>': 'v', v: '<', '<': '^', '^': '>' },
-}
-
-const mapVal = pos => cube[pos.face][pos.row][pos.col]
-const answer = pos =>
-  (pos.row + faces[pos.face].row + 1) * 1000 +
-  (pos.col + faces[pos.face].col + 1) * 4 +
-  dirValue[pos.dir]
-
-const v = 'v'
-const faces = [
-  {},
-  {
-    face: 1,
-    row: 0,
-    col: 50,
-    '^': { face: 6, dir: '>' },
-    [v]: { face: 3, dir: 'v' },
-    '<': { face: 4, dir: '>' },
-    '>': { face: 2, dir: '>' },
-  },
-  {
-    face: 2,
-    row: 0,
-    col: 100,
-    '^': { face: 6, dir: '^' },
-    [v]: { face: 3, dir: '<' },
-    '<': { face: 1, dir: '<' },
-    '>': { face: 5, dir: '<' },
-  },
-  {
-    face: 3,
-    row: 50,
-    col: 50,
-    '^': { face: 1, dir: '^' },
-    [v]: { face: 5, dir: 'v' },
-    '<': { face: 4, dir: 'v' },
-    '>': { face: 2, dir: '^' },
-  },
-  {
-    face: 4,
-    row: 100,
-    col: 0,
-    '^': { face: 3, dir: '>' },
-    [v]: { face: 6, dir: 'v' },
-    '<': { face: 1, dir: '>' },
-    '>': { face: 5, dir: '>' },
-  },
-  {
-    face: 5,
-    row: 100,
-    col: 50,
-    '^': { face: 3, dir: '^' },
-    [v]: { face: 6, dir: '<' },
-    '<': { face: 4, dir: '<' },
-    '>': { face: 2, dir: '<' },
-  },
-  {
-    face: 6,
-    row: 150,
-    col: 0,
-    '^': { face: 4, dir: '^' },
-    [v]: { face: 2, dir: 'v' },
-    '<': { face: 1, dir: 'v' },
-    '>': { face: 5, dir: '^' },
-  },
-]
-
-let cube = [...Array(7)].map(_ => Array.from({ length: 50 }, () => Array(50)))
-cube[0] = undefined
-const cubed = () => {
-  for (let face = 1; face < 7; face++)
-    for (let row = 0; row < 50; row++)
-      for (let col = 0; col < 50; col++) {
-        cube[face][row][col] = map[row + faces[face].row][col + faces[face].col]
+const splitter = /(\w{4}): (\w{4}) (.) (\w{4})|(\w{4}): (\d+)/g
+const parseInput = () => {
+  let monkeys = {}
+  input.split('\n').map(monkey => {
+    let command = [...monkey.matchAll(splitter)][0]
+    if (command[1])
+      monkeys[command[1]] = {
+        thing1: command[2],
+        thing2: command[4],
+        operator: command[3],
       }
+    else
+      monkeys[command[5]] = {
+        answer: Number(command[6]),
+      }
+  })
+  return monkeys
 }
 
-const nextStep = curr => {
-  let [r, c] = move[curr.dir]
+let answers = {}
 
-  let next = { ...curr }
-  next.row += r
-  next.col += c
+const operate = (operation, who) => {
+  switch (who) {
+    case 'thing1':
+      return {
+        '+': (n, t1) => n - t1,
+        '-': (n, t1) => t1 - n,
+        '*': (n, t1) => n / t1,
+        '/': (n, t1) => t1 / n,
+      }[operation]
+    case 'thing2':
+      return {
+        '+': (n, t2) => n - t2,
+        '-': (n, t2) => n + t2,
+        '*': (n, t2) => n / t2,
+        '/': (n, t2) => n * t2,
+      }[operation]
+    default:
+      return {
+        '+': (t1, t2) => t1 + t2,
+        '-': (t1, t2) => t1 - t2,
+        '*': (t1, t2) => t1 * t2,
+        '/': (t1, t2) => t1 / t2,
+      }[operation]
+  }
+}
 
-  if (next.row < 0 || next.col < 0 || next.row >= 50 || next.col >= 50) {
-    let { row, col, face } = next
+const print = ({ name, currentAnswer, thing1, thing1Answer, operator, thing2, thing2Answer }) =>
+  console.log(
+    `${name}(${currentAnswer || ''})=${thing1}(${thing1Answer || ''})${operator}${thing2}(${
+      thing2Answer || ''
+    })`,
+  )
 
-    let from = curr.dir
-    let to = faces[face][from].dir
-
-    next.dir = to
-    next.face = faces[face][from].face
-
-    switch (from + to) {
-      case '<<':
-        next.col += 50
-        break
-      case '<>':
-        next.row = Math.abs(row + 1 - 50)
-        next.col = 0
-        break
-      case '<v':
-        next.col = row
-        next.row = 0
-        break
-      case '><':
-        next.row = Math.abs(row + 1 - 50)
-        next.col = col - 1
-        break
-      case '>>':
-        next.col = 0
-        break
-      case '>^':
-        next.row = col - 1
-        next.col = row
-        break
-      case '^^':
-        next.row += 50
-        break
-      case '^>':
-        next.row = col
-        next.col = 0
-        break
-      case 'v<':
-        next.row = col
-        next.col = row - 1
-        break
-      case 'vv':
-        next.row = 0
-        break
+const process = monkeys => {
+  while (!answers.humn) {
+    for (let name in monkeys) {
+      const { thing1, operator, thing2, answer } = monkeys[name]
+      if (answer) {
+        if (!answers[name]) answers[name] = answer
+        continue
+      }
+      let currentAnswer = answers[name]
+      let thing1Answer = answers[thing1]
+      let thing2Answer = answers[thing2]
+      if (currentAnswer && thing1Answer && thing2Answer) continue
+      // else print({ name, currentAnswer, thing1, thing1Answer, operator, thing2, thing2Answer })
+      if (operator === '=' && (thing1Answer || thing2Answer)) {
+        if (!(thing1Answer && thing2Answer)) {
+          const value = thing1Answer || thing2Answer
+          if (value !== undefined) {
+            answers[thing1] = value
+            answers[thing2] = value
+          }
+        }
+      } else if (!currentAnswer && thing1Answer && thing2Answer) {
+        answers[name] = operate(operator)(thing1Answer, thing2Answer)
+      } else if (!thing1Answer && currentAnswer && thing2Answer) {
+        answers[thing1] = operate(operator, 'thing2')(currentAnswer, thing2Answer)
+      } else if (!thing2Answer && currentAnswer && thing1Answer) {
+        answers[thing2] = operate(operator, 'thing1')(currentAnswer, thing1Answer)
+      }
     }
   }
-  return next
+  return answers.humn
 }
 
-const step = pos => {
-  let steps = forwards.shift()
-  console.log(`move: ${steps} steps`)
-  ;[...Array(steps)].map(_ => {
-    let next = nextStep(pos)
-    if (mapVal(next) === '#') return pos
-    pos = next
-  })
-  return pos
+const part1 = () => {
+  timingMonitor()
+  let monkeys = parseInput()
+  monkeys.root.operator = '='
+  delete monkeys.humn
+  console.log(process(monkeys))
+  console.log(timingMonitor())
 }
 
-const turn = pos => {
-  let rotation = rotations.shift()
-  if (!rotation) return pos.dir
-  return rotate[rotation][pos.dir]
-}
-
-const walk = () => {
-  parse()
-  cubed()
-  let pos = { dir: '>', face: 1, col: 0, row: 0 }
-  console.log(`start: ${JSON.stringify(pos)}`)
-  while (forwards.length) {
-    pos = step(pos)
-    console.log(`step: ${JSON.stringify(pos)}`)
-    pos.dir = turn(pos)
-    console.log(`turn: ${JSON.stringify(pos)}`)
-  }
-  console.log(answer(pos)) // > 171088
-}
-
-walk()
+part1()
