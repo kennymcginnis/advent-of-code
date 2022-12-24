@@ -39,16 +39,23 @@ const initBoard = () => {
   updateBoard()
 }
 
-const updateBoard = () => {
+const resetBoard = () => {
   board = Array.from({ length: rows }, () => new Array(cols).fill('.'))
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
-      if ([0, rows - 1].includes(row) || [0, cols - 1].includes(col)) board[row][col] = '#'
+      if (
+        [0, rows - 1].includes(row) || // top/bottom
+        [0, cols - 1].includes(col) // left/right
+      )
+        board[row][col] = '#'
     }
   }
   board[entranceRow][entranceCol] = '.'
   board[exitRow][exitCol] = '.'
+}
 
+const updateBoard = () => {
+  resetBoard()
   for (let { row, col, dir } of winds.values()) {
     if (board[row][col] === '#') throw 'winds should not be in the boarder'
     else if (board[row][col] === '.') board[row][col] = dir
