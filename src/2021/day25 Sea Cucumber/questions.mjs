@@ -6,11 +6,11 @@ let printing = true
 const assertEquals = (a, b) => console.log(a === b ? '🎉 Yay' : '😭 Oops', a, b)
 let [timer, timingMonitor] = [0, () => (timer = !timer ? Date.now() : `${Date.now() - timer}ms`)]
 
-const parseInput = input =>
-  input.split('\n').map(r => {
-    let [command, units] = r.split(' ')
-    return { command, units: Number(units) }
-  })
+const parseInput = input => input.split('\n').map(r => r.split(''))
+
+const moveRight = () => {
+  let row
+}
 
 const part1 = () => {
   let data = parseInput(sample)
