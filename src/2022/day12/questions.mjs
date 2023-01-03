@@ -1,15 +1,13 @@
 import data from './input.mjs'
 
-const grid = data
-  .split('\n')
-  .map(l => l.split(''))
+const grid = data.split('\n').map(l => l.split(''))
 
 let graph = {}
 
 const calcHeight = current => {
   let height = current.charCodeAt()
-  if (current === "S") height = "a".charCodeAt()
-  if (current === "E") height = "z".charCodeAt()
+  if (current === 'S') height = 'a'.charCodeAt()
+  if (current === 'E') height = 'z'.charCodeAt()
   return height
 }
 
@@ -18,8 +16,8 @@ const addNeighbor = (height, row, col, neighbors) => {
   let neighborHeight = calcHeight(neighbor)
 
   //Q1: if ((height + 1) < neighborHeight) return
-  if (height > (neighborHeight + 1)) return
-  if (neighbor === "S" || neighbor === "E") {
+  if (height > neighborHeight + 1) return
+  if (neighbor === 'S' || neighbor === 'E') {
     neighbors[neighbor] = 1
   } else {
     neighbors[`${row},${col}`] = 1
@@ -45,7 +43,7 @@ const init = () => {
       //Q2: mock link to "S" with distance of zero
       // if (current === "a") neighbors["S"] = 0
 
-      if (current === "S" || current === "E") {
+      if (current === 'S' || current === 'E') {
         graph[current] = neighbors
       } else {
         graph[`${row},${col}`] = neighbors
@@ -62,8 +60,7 @@ const shortestDistanceNode = (distances, visited) => {
   for (let node in distances) {
     // if no node has been assigned to shortest yet
     // or if the current node's distance is smaller than the current shortest
-    let currentIsShortest =
-      shortest === null || distances[node] < distances[shortest]
+    let currentIsShortest = shortest === null || distances[node] < distances[shortest]
 
     // and if the current node is in the unvisited set
     if (currentIsShortest && !visited.includes(node)) {
@@ -75,10 +72,9 @@ const shortestDistanceNode = (distances, visited) => {
 }
 
 const findShortestPath = (graph, startNode, endNode) => {
-
   // track distances from the start node using a hash object
   let distances = {}
-  distances[endNode] = "Infinity"
+  distances[endNode] = 'Infinity'
   distances = Object.assign(distances, graph[startNode])
   // track paths using a hash object
   let parents = {}
@@ -99,7 +95,6 @@ const findShortestPath = (graph, startNode, endNode) => {
 
     // for each of those child nodes:
     for (let child in children) {
-
       // make sure each child node is not the start node
       if (String(child) === String(startNode)) {
         continue
@@ -144,7 +139,7 @@ const findShortestPath = (graph, startNode, endNode) => {
 init()
 // console.log(graph)
 // Q1: S->E
-console.log(findShortestPath(graph, "S", "E"))
+console.log(findShortestPath(graph, 'S', 'E'))
 
 //Q2: E->a(S)
 // console.log(findShortestPath(graph, "E", "S"))
