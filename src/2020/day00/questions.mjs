@@ -21,7 +21,7 @@ const part1 = () => {
 }
 
 const part2 = () => {
-  let data = parseInput(input)
+  let data = parseInput(sample)
   return
 }
 
