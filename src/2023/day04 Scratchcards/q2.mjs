@@ -16,10 +16,10 @@ const part2 = () => {
   let data = parseInput(input)
 
   for (let row in data) {
-    let {winning, numbers} = data[row]
+    let {counter, winning, numbers} = data[row]
     winning
       .filter(v => numbers.includes(v))
-      .forEach((_, v) => data[+row + v + 1].counter += data[row].counter)
+      .forEach((_, v) => data[+row + v + 1].counter += counter)
   }
   return data.reduce((agg, cur) => agg + cur.counter, 0)
 }
