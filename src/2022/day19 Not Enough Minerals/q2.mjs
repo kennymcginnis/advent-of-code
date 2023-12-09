@@ -1,5 +1,5 @@
 import input from './input.mjs'
-// import input from './sample.mjs'
+// import input from './sample1.mjs'
 
 let [timer, timingMonitor] = [0, () => (timer = !timer ? Date.now() : `${Date.now() - timer}ms`)]
 

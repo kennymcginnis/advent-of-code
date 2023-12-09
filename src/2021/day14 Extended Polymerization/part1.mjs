@@ -1,4 +1,4 @@
-// import rawData from './sample.mjs'
+// import rawData from './sample1.mjs'
 import rawData from './input.mjs'
 
 let [timer, timingMonitor] = [0, () => (timer = !timer ? Date.now() : `${Date.now() - timer}ms`)]

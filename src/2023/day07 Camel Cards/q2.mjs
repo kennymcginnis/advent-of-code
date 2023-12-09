@@ -9,7 +9,7 @@ let sorting = (v) => sort[v] || '0' + v
 const parseInput = (input) => {
   return input.split('\n').map((r) => {
     let [cards, b] = r.split(' ')
-    return { cards, hand: cards.split(''), bid: +b }
+    return { cards, score: null, sorter: null, hand: cards.split(''), bid: +b }
   })
 }
 

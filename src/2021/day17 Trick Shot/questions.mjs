@@ -1,4 +1,4 @@
-// import rawData from './sample.mjs'
+// import rawData from './sample1.mjs'
 import rawData from './input.mjs'
 let printing = true
 

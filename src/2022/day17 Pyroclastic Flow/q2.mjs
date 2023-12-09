@@ -1,5 +1,5 @@
 import data from './input.mjs'
-// import data from './sample.mjs'
+// import data from './sample1.mjs'
 
 Object.defineProperty(Array.prototype, 'chunk', {
   value: function (size) {

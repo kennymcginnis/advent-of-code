@@ -1,4 +1,4 @@
-// import data from './sample.mjs'
+// import data from './sample1.mjs'
 import data from './input.mjs'
 
 const input = data
