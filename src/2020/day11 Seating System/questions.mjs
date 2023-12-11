@@ -18,9 +18,9 @@ const neighbors = [
   [1, 1], //   bottom-right
 ]
 
-const parseInput = input => input.split('\n').map(r => r.split(''))
+const parseInput = (input) => input.split('\n').map((r) => r.split(''))
 
-const clone = input => JSON.parse(JSON.stringify(input))
+const clone = (input) => JSON.parse(JSON.stringify(input))
 
 const match = (input, output) =>
   output.every((row, r) =>
@@ -46,7 +46,7 @@ const fourOrMore = (data, row, col) =>
 const fiveOrMore = (data, row, col) =>
   neighbors.filter(([r, c]) => {
     for (let i = 1; i < 100; i++) {
-      let viewing = data?.[row + (r * i)]?.[col + (c * i)]
+      let viewing = data?.[row + r * i]?.[col + c * i]
       if (viewing === undefined) return false
       if (viewing === 'L') return false
       if (viewing === '#') return true
@@ -57,7 +57,7 @@ const fiveOrMore = (data, row, col) =>
 const lineOfSight = (data, row, col) =>
   neighbors.every(([r, c]) => {
     for (let i = 1; i < 100; i++) {
-      let viewing = data?.[row + (r * i)]?.[col + (c * i)]
+      let viewing = data?.[row + r * i]?.[col + c * i]
       if (viewing === undefined) return true
       if (viewing === 'L') return true
       if (viewing === '#') return false
@@ -65,18 +65,18 @@ const lineOfSight = (data, row, col) =>
     }
   })
 
-const score = input =>
+const score = (input) =>
   input.flat().reduce((agg, item) => {
     if (item === '#') agg++
     return agg
   }, 0)
 
-const print = board => {
+const print = (board) => {
   console.log('')
   for (let row of board) console.log(row.join(''))
 }
 
-const part1 = rawInput => {
+const part1 = (rawInput) => {
   let output = parseInput(rawInput)
   let input = [...Array(output.length)].map(() => Array(output[0].length))
 
@@ -97,7 +97,7 @@ const part1 = rawInput => {
   return score(input)
 }
 
-const part2 = rawInput => {
+const part2 = (rawInput) => {
   let output = parseInput(rawInput)
   let input = [...Array(output.length)].map(() => Array(output[0].length))
 
