@@ -3,13 +3,11 @@ import input from './input.mjs'
 
 let [timer, timingMonitor] = [0, () => (timer = !timer ? Date.now() : `${Date.now() - timer}ms`)]
 
-const parseInput = input => {
-  const splitter = /(\d+)-(\d+)\s(\w):\s(\w+)/g
-  input.split('\n').map(r => {
-    let hmmm = [...r.matchAll(splitter)]
-    return { command, units: Number(units) }
-  })
-}
+const parseInput = (input) =>
+  input
+    .split('\n')
+    .map((row) => row.split(' '))
+    .map(([spring, damage]) => [spring, damage.split(',').map(Number)])
 
 const part1 = () => {
   let data = parseInput(sample)
