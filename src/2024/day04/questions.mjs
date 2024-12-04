@@ -7,14 +7,15 @@ const parseInput = (input) => input.split('\n').map((r) => r.split(''))
 
 const xmas = ['X', 'M', 'A', 'S']
 const neighbors = [
-  [-1, -1],
-  [-1, 0],
-  [-1, 1],
-  [0, -1],
-  [0, 1],
-  [1, -1],
-  [1, 0],
-  [1, 1],
+  [-1, -1], // top-left
+  [-1, 0], //  top-middle
+  [-1, 1], //  top-right
+  [0, -1], //  left
+  // [0, 0], //   middle (self)
+  [0, 1], //   right
+  [1, -1], //  bottom-left
+  [1, 0], //   bottom-middle
+  [1, 1], //   bottom-right
 ]
 
 const part1 = () => {
