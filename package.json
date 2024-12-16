@@ -7,9 +7,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "blueimp-md5": "^2.19.0",
     "crypto": "^1.0.1",
     "esm": "^3.2.25",
-    "heap-js": "^2.3.0"
+    "heap-js": "^2.3.0",
+    "node-fetch": "^3.3.2"
   },
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "raw-loader": "^4.0.2"
+  }
 }

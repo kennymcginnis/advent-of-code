@@ -3,18 +3,15 @@ import input from './input.mjs'
 
 let [timer, timingMonitor] = [0, () => (timer = !timer ? Date.now() : `${Date.now() - timer}ms`)]
 
-const parseInput = (input) => {
-  return input.split('\n').map((r) => r.split(''))
-}
+const floors = { '(': 1, ')': -1 }
 
-const part1 = () => {
-  let data = parseInput(sample)
-  return
-}
+const part1 = () => input.split('').reduce((agg, cur) => agg + floors[cur], 0)
 
 const part2 = () => {
-  let data = parseInput(sample)
-  return
+  for (let i = 0, floor = 0; i < input.split('').length; i++) {
+    floor += floors[data[i]]
+    if (floor < 0) return i + 1
+  }
 }
 
 const run = () => {

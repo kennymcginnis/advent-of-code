@@ -1,20 +1,31 @@
-import sample from './sample.mjs'
-import input from './input.mjs'
+import md5 from 'blueimp-md5'
 
 let [timer, timingMonitor] = [0, () => (timer = !timer ? Date.now() : `${Date.now() - timer}ms`)]
 
-const parseInput = (input) => {
-  return input.split('\n').map((r) => r.split(''))
-}
+const secretKey = 'bgvyzdsv'
 
 const part1 = () => {
-  let data = parseInput(sample)
-  return
+  var num = 0
+  var hash = md5(secretKey + num)
+
+  while (hash.slice(0, 5) !== '00000') {
+    num++
+    hash = md5(secretKey + num)
+  }
+
+  return num
 }
 
 const part2 = () => {
-  let data = parseInput(sample)
-  return
+  var num = 0
+  var hash = md5(secretKey + num)
+
+  while (hash.slice(0, 6) !== '000000') {
+    num++
+    hash = md5(secretKey + num)
+  }
+
+  return num
 }
 
 const run = () => {
