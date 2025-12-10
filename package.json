@@ -11,7 +11,8 @@
     "crypto": "^1.0.1",
     "esm": "^3.2.25",
     "heap-js": "^2.3.0",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "z3-solver": "^4.15.4"
   },
   "description": "",
   "devDependencies": {

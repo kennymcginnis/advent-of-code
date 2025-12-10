@@ -48,7 +48,7 @@ const part1 = () => {
 }
 
 const part2 = () => {
-  let data = input.split('\n')
+  let data = sample.split('\n')
   const beams = new Array(data[0].length).fill(0)
   beams[data[0].indexOf('S')] = 1
   for (const row of data.slice(1)) {
